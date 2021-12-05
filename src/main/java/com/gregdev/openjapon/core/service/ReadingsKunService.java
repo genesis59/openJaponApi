@@ -1,5 +1,6 @@
 package com.gregdev.openjapon.core.service;
 
+import com.gregdev.openjapon.core.entity.Kanji;
 import com.gregdev.openjapon.core.entity.ReadingsKun;
 import com.gregdev.openjapon.core.repository.ReadingsKunRepositoryInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +15,27 @@ public class ReadingsKunService {
     @Autowired
     private ReadingsKunRepositoryInterface readingsKunRepositoryInterface;
 
-    public List<ReadingsKun> getReadKunByIdKanji(Long id){
-        Iterable<ReadingsKun> readKunList = readingsKunRepositoryInterface.findAll();
-        List<ReadingsKun> readKunListForKanji= new ArrayList<>();
-        for (ReadingsKun readKun: readKunList){
-            if(readKun.getIdKanji().equals(id)){
-                readKunListForKanji.add(readKun);
-            }
+    /**
+     * Sauvegarde en BD les lectures Kun du kanji
+     *
+     * @param readingsKunList List<ReadingsKun>
+     * @param idKanji         Kanji
+     * @return List<ReadingsKun>
+     */
+    public List<ReadingsKun> saveList(List<ReadingsKun> readingsKunList, Kanji idKanji) {
+        List<ReadingsKun> readingsKunsWithId = new ArrayList<>();
+        for (ReadingsKun readingsKun : readingsKunList) {
+
+            readingsKun.setIdKanji(idKanji);
+            ReadingsKun newReadingKun = readingsKunRepositoryInterface.save(readingsKun);
+            readingsKunsWithId.add(newReadingKun);
         }
-        return readKunListForKanji;
+        return readingsKunsWithId;
     }
+
+    /**
+     * getters and setters
+     */
 
     public ReadingsKunRepositoryInterface getReadingsKunRepositoryInterface() {
         return readingsKunRepositoryInterface;

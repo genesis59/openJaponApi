@@ -9,15 +9,15 @@ public class MeaningsFr {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
-    @Column(nullable = false,length = 50)
+    @Column(nullable = false, length = 50)
     private String meaningFr;
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ID_KANJI")
     @JsonIgnore
-    private Long idKanji;
+    private Kanji idKanji;
 
-    public MeaningsFr(Long id, String meaningFr, Long idKanji) {
+    public MeaningsFr(Long id, String meaningFr, Kanji idKanji) {
         this.id = id;
         this.meaningFr = meaningFr;
         this.idKanji = idKanji;
@@ -42,11 +42,11 @@ public class MeaningsFr {
         this.meaningFr = meaningFr;
     }
 
-    public Long getIdKanji() {
+    public Kanji getIdKanji() {
         return idKanji;
     }
 
-    public void setIdKanji(Long idKanji) {
+    public void setIdKanji(Kanji idKanji) {
         this.idKanji = idKanji;
     }
 }

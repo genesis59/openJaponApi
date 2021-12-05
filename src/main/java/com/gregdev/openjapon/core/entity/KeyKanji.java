@@ -1,7 +1,5 @@
 package com.gregdev.openjapon.core.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,29 +9,18 @@ public class KeyKanji {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
     @Column(nullable = false, length = 1)
     private Character symbolKey;
     @Column(nullable = false, length = 30)
     private String nameKey;
     @Column(nullable = false)
-    private Byte keyNumber;
+    private Short keyNumber;
     @Column(nullable = false)
     private Byte strokes;
-    /*
     @ManyToMany(mappedBy = "keyKanji")
-    private List<Kanji> kanjis = new ArrayList<>();*/
+    private List<Kanji> kanjis = new ArrayList<>();
 
-    public KeyKanji(Long id, Character symbolKey, String nameKey, Byte keyNumber) {
-        this.id = id;
-        this.symbolKey = symbolKey;
-        this.nameKey = nameKey;
-        this.keyNumber = keyNumber;
-    }
-
-    public KeyKanji() {
-    }
 
     public Long getId() {
         return id;
@@ -59,11 +46,11 @@ public class KeyKanji {
         this.nameKey = nameKey;
     }
 
-    public Byte getKeyNumber() {
+    public Short getKeyNumber() {
         return keyNumber;
     }
 
-    public void setKeyNumber(Byte keyNumber) {
+    public void setKeyNumber(Short keyNumber) {
         this.keyNumber = keyNumber;
     }
 

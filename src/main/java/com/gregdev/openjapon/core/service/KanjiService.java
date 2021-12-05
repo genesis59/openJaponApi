@@ -22,34 +22,76 @@ public class KanjiService {
     @Autowired
     private ReadingsOnService readingsOnService;
 
-
+    /**
+     * Récupère la liste complète des kanji en BD et leurs informations
+     *
+     * @return Iterable<Kanji>
+     */
     public Iterable<Kanji> getKanjiList() {
-        Iterable<Kanji> kanjis = kanjiRepository.findAll();
-        for(Kanji kanji: kanjis){
-            kanji.setMeaningsFrList(meaningsFrService.getMeanFrByIdKanji(kanji.getId()));
-            kanji.setReadingsOnList(readingsOnService.getReadOnByIdKanji(kanji.getId()));
-            kanji.setReadingsKunList(readingsKunService.getReadKunByIdKanji(kanji.getId()));
-        }
-        return kanjis;
+        return kanjiRepository.findAll();
     }
 
+    /**
+     * Sauvegarde d'un Kanji et de ses informations
+     *
+     * @param kanji Kanji
+     * @return Kanji
+     */
+    public Kanji add(Kanji kanji) {
+        /* Création et ajout à la base de données d'une nouvelle entité Kanji à partir
+         * de l'argument kanji
+         */
+        Kanji newKanji = new Kanji();
+        newKanji.setStrokes(kanji.getStrokes());
+        newKanji.setSymbol(kanji.getSymbol());
+        newKanji.setKeyKanji(kanji.getKeyKanji());
+        Kanji kanjiWithId = kanjiRepository.save(newKanji);
+
+        /* Ajout du nouvel identifiant du kanji aux autres entités */
+        kanjiWithId.setMeaningsFrList(meaningsFrService.saveList(kanji.getMeaningsFrList(), kanjiWithId));
+        kanjiWithId.setReadingsKunList(readingsKunService.saveList(kanji.getReadingsKunList(), kanjiWithId));
+        kanjiWithId.setReadingsOnList(readingsOnService.saveList(kanji.getReadingsOnList(), kanjiWithId));
+        return kanjiWithId;
+    }
+
+    /**
+     * Sauvegarde d'une liste de Kanji et de leurs informations
+     *
+     * @param kanjis List<Kanji>
+     * @return List<Kanji>
+     */
+    public List<Kanji> addAll(List<Kanji> kanjis) {
+
+        List<Kanji> newKanjis = new ArrayList<>();
+        for (Kanji kanji : kanjis) {
+            Kanji newKanji = this.add(kanji);
+            newKanjis.add(newKanji);
+        }
+        return newKanjis;
+    }
+
+    /**
+     * Recherche d'une liste de kanji en fonction de paramètres
+     *
+     * @param stroke Character
+     * @param symbol Byte
+     * @return List<Kanji>
+     */
     public List<Kanji> getKanjiBy(Byte stroke, Character symbol) {
 
         Iterable<Kanji> kanjisDb = kanjiRepository.findAll();
         List<Kanji> kanjis = new ArrayList<>();
-        for (Kanji kanji: kanjisDb){
-            if(stroke != null && symbol != null){
-                if(kanji.getSymbol().equals(symbol) && kanji.getStrokes().equals(stroke) ){
+        for (Kanji kanji : kanjisDb) {
+            if (stroke != null && symbol != null) {
+                if (kanji.getSymbol().equals(symbol) && kanji.getStrokes().equals(stroke)) {
                     kanjis.add(kanji);
                 }
-            }
-            else if(stroke == null && symbol != null){
-                if(kanji.getSymbol().equals(symbol)){
+            } else if (stroke == null && symbol != null) {
+                if (kanji.getSymbol().equals(symbol)) {
                     kanjis.add(kanji);
                 }
-            }
-            else if(stroke != null){
-                if(kanji.getStrokes().equals(stroke)){
+            } else if (stroke != null) {
+                if (kanji.getStrokes().equals(stroke)) {
                     kanjis.add(kanji);
                 }
             }
@@ -57,17 +99,27 @@ public class KanjiService {
         return kanjis;
     }
 
-    public Kanji getKanjiById(Long id){
+    public Optional<Kanji> getKanjiById(Long id) {
         Optional<Kanji> optionalKanji = kanjiRepository.findById(id);
-        if(optionalKanji.isEmpty()){
+        if (optionalKanji.isEmpty()) {
             throw new NoSuchElementException();
         }
-        return optionalKanji.get();
+        return optionalKanji;
     }
 
+    /**
+     * Nombre de kanji en BD
+     *
+     * @return Long
+     */
     public Long getCountList() {
         return kanjiRepository.count();
     }
+
+
+    /**
+     * getters and setters
+     **/
 
     public KanjiRepositoryInterface getKanjiRepository() {
         return kanjiRepository;

@@ -8,15 +8,15 @@ import javax.persistence.*;
 public class ReadingsOn {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
     @Column(nullable = false, length = 50)
     private String readingOn;
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_KANJI")
     @JsonIgnore
-    private Long idKanji;
+    private Kanji idKanji;
 
-    public ReadingsOn(Long id, String readingOn, Long idKanji) {
+    public ReadingsOn(Long id, String readingOn, Kanji idKanji) {
         this.id = id;
         this.readingOn = readingOn;
         this.idKanji = idKanji;
@@ -41,11 +41,11 @@ public class ReadingsOn {
         this.readingOn = readingOn;
     }
 
-    public Long getIdKanji() {
+    public Kanji getIdKanji() {
         return idKanji;
     }
 
-    public void setIdKanji(Long idKanji) {
+    public void setIdKanji(Kanji idKanji) {
         this.idKanji = idKanji;
     }
 }

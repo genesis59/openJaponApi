@@ -1,8 +1,5 @@
 package com.gregdev.openjapon.core.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.ManyToAny;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +9,8 @@ public class Kanji {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
-    @Column(nullable = false,length = 1)
+    @Column(nullable = false, length = 1)
     private Character symbol;
     @Column(nullable = false)
     private Byte strokes;
@@ -28,19 +24,19 @@ public class Kanji {
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            mappedBy = "idKanji"
     )
     private List<MeaningsFr> meaningsFrList = new ArrayList<>();
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            mappedBy = "idKanji"
     )
     private List<ReadingsKun> readingsKunList = new ArrayList<>();
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            mappedBy = "idKanji"
     )
     private List<ReadingsOn> readingsOnList = new ArrayList<>();
 

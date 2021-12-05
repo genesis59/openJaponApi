@@ -1,5 +1,6 @@
 package com.gregdev.openjapon.core.service;
 
+import com.gregdev.openjapon.core.entity.Kanji;
 import com.gregdev.openjapon.core.entity.ReadingsOn;
 import com.gregdev.openjapon.core.repository.ReadingsOnRepositoryInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +15,27 @@ public class ReadingsOnService {
     @Autowired
     private ReadingsOnRepositoryInterface readingsOnRepositoryInterface;
 
-    public List<ReadingsOn> getReadOnByIdKanji(Long id){
-        Iterable<ReadingsOn> readOnList = readingsOnRepositoryInterface.findAll();
-        List<ReadingsOn> readOnListForKanji= new ArrayList<>();
-        for (ReadingsOn readOn: readOnList){
-            if(readOn.getIdKanji().equals(id)){
-                readOnListForKanji.add(readOn);
-            }
+    /**
+     * Sauvegarde en BD les lectures On du kanji
+     *
+     * @param readingsOnList List<ReadingsOn>
+     * @param idKanji        Kanji
+     * @return List<ReadingsOn>
+     */
+    public List<ReadingsOn> saveList(List<ReadingsOn> readingsOnList, Kanji idKanji) {
+        List<ReadingsOn> readingsOnsWithId = new ArrayList<>();
+        for (ReadingsOn readingsOn : readingsOnList) {
+
+            readingsOn.setIdKanji(idKanji);
+            ReadingsOn newReadingOn = readingsOnRepositoryInterface.save(readingsOn);
+            readingsOnsWithId.add(newReadingOn);
         }
-        return readOnListForKanji;
+        return readingsOnsWithId;
     }
+
+    /**
+     * getters and setters
+     */
 
     public ReadingsOnRepositoryInterface getReadingsOnRepositoryInterface() {
         return readingsOnRepositoryInterface;

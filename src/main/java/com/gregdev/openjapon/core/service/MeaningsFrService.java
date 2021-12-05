@@ -1,5 +1,6 @@
 package com.gregdev.openjapon.core.service;
 
+import com.gregdev.openjapon.core.entity.Kanji;
 import com.gregdev.openjapon.core.entity.MeaningsFr;
 import com.gregdev.openjapon.core.repository.MeaningsFrRepositoryInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +15,27 @@ public class MeaningsFrService {
     @Autowired
     private MeaningsFrRepositoryInterface meaningsFrRepositoryInterface;
 
-    public List<MeaningsFr> getMeanFrByIdKanji(Long id){
-        Iterable<MeaningsFr> meanList = meaningsFrRepositoryInterface.findAll();
-        List<MeaningsFr> meanListForKanji= new ArrayList<>();
-        for (MeaningsFr mean: meanList){
-            if(mean.getIdKanji().equals(id)){
-                meanListForKanji.add(mean);
-            }
+    /**
+     * Sauvegarde en BD les significations en français du kanji
+     *
+     * @param meaningsFrList List<MeaningsFr>
+     * @param idKanji        Kanji
+     * @return List<MeaningsFr>
+     */
+    public List<MeaningsFr> saveList(List<MeaningsFr> meaningsFrList, Kanji idKanji) {
+        List<MeaningsFr> meaningsFrListWithId = new ArrayList<>();
+        for (MeaningsFr meaningsFr : meaningsFrList) {
+
+            meaningsFr.setIdKanji(idKanji);
+            MeaningsFr newMeaningFr = meaningsFrRepositoryInterface.save(meaningsFr);
+            meaningsFrListWithId.add(newMeaningFr);
         }
-        return meanListForKanji;
+        return meaningsFrListWithId;
     }
+
+    /**
+     * getters and setters
+     */
 
     public MeaningsFrRepositoryInterface getMeaningsFrRepositoryInterface() {
         return meaningsFrRepositoryInterface;

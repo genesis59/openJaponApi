@@ -3,6 +3,9 @@ package com.gregdev.openjapon.core.service;
 import com.gregdev.openjapon.core.entity.Kanji;
 import com.gregdev.openjapon.core.repository.KanjiRepositoryInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,16 +25,46 @@ public class KanjiService {
     @Autowired
     private ReadingsOnService readingsOnService;
 
+
+    /***********************************************************/
+    /**                   FONCTIONS READ                      **/
+    /***********************************************************/
+
     /**
-     * Récupère la liste complète des kanji en BD et leurs informations
+     * getKanjiBy(Byte stroke, Pageable page)
+     * Recherche d'une liste de kanji en fonction de paramètres
      *
-     * @return Iterable<Kanji>
+     * @param strokes Byte
+     * @param page   Pageable
+     * @return Map<String, Object>
      */
-    public Iterable<Kanji> getKanjiList() {
-        return kanjiRepository.findAll();
+    public Map<String, Object> getKanjiBy(Byte strokes, Pageable page) {
+
+        Page<Kanji> pageKanjis;
+        if (strokes == null) {
+            pageKanjis = kanjiRepository.findAll(page);
+        } else {
+            pageKanjis = kanjiRepository.findByStrokes(strokes, page);
+        }
+        return this.getKanjiMap(pageKanjis);
     }
 
     /**
+     * getKanjiById(Long id)
+     *
+     * @param id Long
+     * @return Optional<Kanji>
+     */
+    public Optional<Kanji> getKanjiById(Long id) {
+        Optional<Kanji> optionalKanji = kanjiRepository.findById(id);
+        if (optionalKanji.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return optionalKanji;
+    }
+
+    /**
+     * add(Kanji kanji)
      * Sauvegarde d'un Kanji et de ses informations
      *
      * @param kanji Kanji
@@ -54,7 +87,12 @@ public class KanjiService {
         return kanjiWithId;
     }
 
+    /***********************************************************/
+    /**                 FONCTIONS CREATE                      **/
+    /***********************************************************/
+
     /**
+     * addAll(List<Kanji> kanjis)
      * Sauvegarde d'une liste de Kanji et de leurs informations
      *
      * @param kanjis List<Kanji>
@@ -71,55 +109,27 @@ public class KanjiService {
     }
 
     /**
-     * Recherche d'une liste de kanji en fonction de paramètres
+     * getKanjiMap(Page<Kanji> page)
+     * Formatage du contenu de la réponse
      *
-     * @param stroke Character
-     * @param symbol Byte
-     * @return List<Kanji>
+     * @param page Page<Kanji>
+     * @return Map<String, Object>
      */
-    public List<Kanji> getKanjiBy(Byte stroke, Character symbol) {
-
-        Iterable<Kanji> kanjisDb = kanjiRepository.findAll();
-        List<Kanji> kanjis = new ArrayList<>();
-        for (Kanji kanji : kanjisDb) {
-            if (stroke != null && symbol != null) {
-                if (kanji.getSymbol().equals(symbol) && kanji.getStrokes().equals(stroke)) {
-                    kanjis.add(kanji);
-                }
-            } else if (stroke == null && symbol != null) {
-                if (kanji.getSymbol().equals(symbol)) {
-                    kanjis.add(kanji);
-                }
-            } else if (stroke != null) {
-                if (kanji.getStrokes().equals(stroke)) {
-                    kanjis.add(kanji);
-                }
-            }
-        }
+    private Map<String, Object> getKanjiMap(Page<Kanji> page) {
+        Map<String, Object> kanjis = new HashMap<>();
+        kanjis.put("contentData", page.getContent());
+        kanjis.put("currentPage", page.getNumber() + 1);
+        kanjis.put("totalItems", page.getTotalElements());
+        kanjis.put("totalPages", page.getTotalPages());
+        kanjis.put("hasNext", page.hasNext());
+        kanjis.put("hasPrevious", page.hasPrevious());
+        kanjis.put("numberOfElements", page.getNumberOfElements());
         return kanjis;
     }
 
-    public Optional<Kanji> getKanjiById(Long id) {
-        Optional<Kanji> optionalKanji = kanjiRepository.findById(id);
-        if (optionalKanji.isEmpty()) {
-            throw new NoSuchElementException();
-        }
-        return optionalKanji;
-    }
-
-    /**
-     * Nombre de kanji en BD
-     *
-     * @return Long
-     */
-    public Long getCountList() {
-        return kanjiRepository.count();
-    }
-
-
-    /**
-     * getters and setters
-     **/
+    /***********************************************************/
+    /**                 GETTERS AND SETTERS                   **/
+    /***********************************************************/
 
     public KanjiRepositoryInterface getKanjiRepository() {
         return kanjiRepository;

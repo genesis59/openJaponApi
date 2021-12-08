@@ -16,6 +16,7 @@ public class ReadingsKunService {
     private ReadingsKunRepositoryInterface readingsKunRepositoryInterface;
 
     /**
+     * saveList(List<ReadingsKun> readingsKunList, Kanji idKanji)
      * Sauvegarde en BD les lectures Kun du kanji
      *
      * @param readingsKunList List<ReadingsKun>
@@ -33,9 +34,9 @@ public class ReadingsKunService {
         return readingsKunsWithId;
     }
 
-    /**
-     * getters and setters
-     */
+    /***********************************************************/
+    /**                 GETTERS AND SETTERS                   **/
+    /***********************************************************/
 
     public ReadingsKunRepositoryInterface getReadingsKunRepositoryInterface() {
         return readingsKunRepositoryInterface;

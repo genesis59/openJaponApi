@@ -9,7 +9,7 @@ public class ReadingsOn {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String readingOn;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_KANJI")

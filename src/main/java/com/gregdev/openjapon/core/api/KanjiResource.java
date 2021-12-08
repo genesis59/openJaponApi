@@ -3,10 +3,14 @@ package com.gregdev.openjapon.core.api;
 import com.gregdev.openjapon.core.entity.Kanji;
 import com.gregdev.openjapon.core.service.KanjiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -16,26 +20,31 @@ public class KanjiResource {
     @Autowired
     private KanjiService kanjiService;
 
-    @GetMapping
-    public Iterable<Kanji> list(@RequestParam(required = false) Byte stroke, @RequestParam(required = false) Character symbol) {
-        if (stroke != null || symbol != null) {
-            return kanjiService.getKanjiBy(stroke, symbol);
-        }
-        return kanjiService.getKanjiList();
-    }
 
     /**
-     * Routes GET
+     * Filtre et pagine une liste de kanjis
+     *
+     * @param strokes Byte
+     * @param page   String
+     * @return ResponseEntity<Map < String, Object>>
      */
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> list(
+            @RequestParam(required = false) Byte strokes,
+            @RequestParam(defaultValue = "5") String size,
+            @RequestParam(defaultValue = "1") String page)
+    {
+        try {
+            Map<String, Object> response = kanjiService.getKanjiBy(strokes, PageRequest.of(Integer.parseInt(page) - 1, Integer.parseInt(size)));
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/{id}")
     public Optional<Kanji> getKanjiById(@PathVariable("id") Long id) {
         return kanjiService.getKanjiById(id);
-    }
-
-    @GetMapping("/count")
-    public Long getKanjiById() {
-        return kanjiService.getCountList();
     }
 
     /**

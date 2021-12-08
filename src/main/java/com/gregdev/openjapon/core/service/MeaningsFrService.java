@@ -16,6 +16,7 @@ public class MeaningsFrService {
     private MeaningsFrRepositoryInterface meaningsFrRepositoryInterface;
 
     /**
+     * saveList(List<MeaningsFr> meaningsFrList, Kanji idKanji)
      * Sauvegarde en BD les significations en français du kanji
      *
      * @param meaningsFrList List<MeaningsFr>
@@ -33,9 +34,9 @@ public class MeaningsFrService {
         return meaningsFrListWithId;
     }
 
-    /**
-     * getters and setters
-     */
+    /***********************************************************/
+    /**                 GETTERS AND SETTERS                   **/
+    /***********************************************************/
 
     public MeaningsFrRepositoryInterface getMeaningsFrRepositoryInterface() {
         return meaningsFrRepositoryInterface;

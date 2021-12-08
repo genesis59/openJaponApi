@@ -16,6 +16,7 @@ public class ReadingsOnService {
     private ReadingsOnRepositoryInterface readingsOnRepositoryInterface;
 
     /**
+     * saveList(List<ReadingsOn> readingsOnList, Kanji idKanji)
      * Sauvegarde en BD les lectures On du kanji
      *
      * @param readingsOnList List<ReadingsOn>
@@ -33,9 +34,9 @@ public class ReadingsOnService {
         return readingsOnsWithId;
     }
 
-    /**
-     * getters and setters
-     */
+    /***********************************************************/
+    /**                 GETTERS AND SETTERS                   **/
+    /***********************************************************/
 
     public ReadingsOnRepositoryInterface getReadingsOnRepositoryInterface() {
         return readingsOnRepositoryInterface;

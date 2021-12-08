@@ -5,7 +5,6 @@ import com.gregdev.openjapon.core.repository.KanjiRepositoryInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -31,26 +30,30 @@ public class KanjiService {
     /***********************************************************/
 
     /**
-     * getKanjiBy(Byte stroke, Pageable page)
-     * Recherche d'une liste de kanji en fonction de paramètres
+     * Recherche d'une liste de kanji en fonction des paramètres renseignés
      *
-     * @param strokes Byte
-     * @param page   Pageable
+     * @param strokes   Byte
+     * @param page      Pageable
+     * @param meaningFr String
      * @return Map<String, Object>
      */
-    public Map<String, Object> getKanjiBy(Byte strokes, Pageable page) {
+    public Map<String, Object> getKanjiBy(String meaningFr, Byte strokes, Pageable page) {
 
         Page<Kanji> pageKanjis;
-        if (strokes == null) {
+        if (strokes == null && meaningFr == null) {
             pageKanjis = kanjiRepository.findAll(page);
-        } else {
+        } else if (strokes != null && meaningFr != null) {
+            pageKanjis = kanjiRepository.findByIdInAndStrokes(meaningsFrService.getListIdKanjiByMeaningFr(meaningFr), strokes, page);
+        } else if (strokes != null) {
             pageKanjis = kanjiRepository.findByStrokes(strokes, page);
+        } else {
+            pageKanjis = kanjiRepository.findByIdIn(meaningsFrService.getListIdKanjiByMeaningFr(meaningFr), page);
         }
         return this.getKanjiMap(pageKanjis);
     }
 
     /**
-     * getKanjiById(Long id)
+     * getKanjiById
      *
      * @param id Long
      * @return Optional<Kanji>
@@ -63,36 +66,32 @@ public class KanjiService {
         return optionalKanji;
     }
 
-    /**
-     * add(Kanji kanji)
-     * Sauvegarde d'un Kanji et de ses informations
-     *
-     * @param kanji Kanji
-     * @return Kanji
-     */
-    public Kanji add(Kanji kanji) {
-        /* Création et ajout à la base de données d'une nouvelle entité Kanji à partir
-         * de l'argument kanji
-         */
-        Kanji newKanji = new Kanji();
-        newKanji.setStrokes(kanji.getStrokes());
-        newKanji.setSymbol(kanji.getSymbol());
-        newKanji.setKeyKanji(kanji.getKeyKanji());
-        Kanji kanjiWithId = kanjiRepository.save(newKanji);
-
-        /* Ajout du nouvel identifiant du kanji aux autres entités */
-        kanjiWithId.setMeaningsFrList(meaningsFrService.saveList(kanji.getMeaningsFrList(), kanjiWithId));
-        kanjiWithId.setReadingsKunList(readingsKunService.saveList(kanji.getReadingsKunList(), kanjiWithId));
-        kanjiWithId.setReadingsOnList(readingsOnService.saveList(kanji.getReadingsOnList(), kanjiWithId));
-        return kanjiWithId;
-    }
 
     /***********************************************************/
     /**                 FONCTIONS CREATE                      **/
     /***********************************************************/
 
     /**
-     * addAll(List<Kanji> kanjis)
+     * Sauvegarde d'un Kanji et de ses informations
+     *
+     * @param kanji Kanji
+     * @return Kanji
+     */
+    public Kanji add(Kanji kanji) {
+
+        Kanji newKanji = new Kanji();
+        newKanji.setStrokes(kanji.getStrokes());
+        newKanji.setSymbol(kanji.getSymbol());
+        newKanji.setKeyKanji(kanji.getKeyKanji());
+        Kanji kanjiWithId = kanjiRepository.save(newKanji);
+
+        kanjiWithId.setMeaningsFrList(meaningsFrService.saveList(kanji.getMeaningsFrList(), kanjiWithId));
+        kanjiWithId.setReadingsKunList(readingsKunService.saveList(kanji.getReadingsKunList(), kanjiWithId));
+        kanjiWithId.setReadingsOnList(readingsOnService.saveList(kanji.getReadingsOnList(), kanjiWithId));
+        return kanjiWithId;
+    }
+
+    /**
      * Sauvegarde d'une liste de Kanji et de leurs informations
      *
      * @param kanjis List<Kanji>
@@ -108,9 +107,12 @@ public class KanjiService {
         return newKanjis;
     }
 
+    /***********************************************************/
+    /**                 AUTRES FONCTIONS                      **/
+    /***********************************************************/
+
     /**
-     * getKanjiMap(Page<Kanji> page)
-     * Formatage du contenu de la réponse
+     * Construction du contenu de la réponse JSON
      *
      * @param page Page<Kanji>
      * @return Map<String, Object>
@@ -125,41 +127,5 @@ public class KanjiService {
         kanjis.put("hasPrevious", page.hasPrevious());
         kanjis.put("numberOfElements", page.getNumberOfElements());
         return kanjis;
-    }
-
-    /***********************************************************/
-    /**                 GETTERS AND SETTERS                   **/
-    /***********************************************************/
-
-    public KanjiRepositoryInterface getKanjiRepository() {
-        return kanjiRepository;
-    }
-
-    public void setKanjiRepository(KanjiRepositoryInterface kanjiRepository) {
-        this.kanjiRepository = kanjiRepository;
-    }
-
-    public MeaningsFrService getMeaningsFrService() {
-        return meaningsFrService;
-    }
-
-    public void setMeaningsFrService(MeaningsFrService meaningsFrService) {
-        this.meaningsFrService = meaningsFrService;
-    }
-
-    public ReadingsKunService getReadingsKunService() {
-        return readingsKunService;
-    }
-
-    public void setReadingsKunService(ReadingsKunService readingsKunService) {
-        this.readingsKunService = readingsKunService;
-    }
-
-    public ReadingsOnService getReadingsOnService() {
-        return readingsOnService;
-    }
-
-    public void setReadingsOnService(ReadingsOnService readingsOnService) {
-        this.readingsOnService = readingsOnService;
     }
 }

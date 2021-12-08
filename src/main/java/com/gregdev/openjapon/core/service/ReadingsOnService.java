@@ -13,10 +13,9 @@ import java.util.List;
 public class ReadingsOnService {
 
     @Autowired
-    private ReadingsOnRepositoryInterface readingsOnRepositoryInterface;
+    private ReadingsOnRepositoryInterface readingsOnRepository;
 
     /**
-     * saveList(List<ReadingsOn> readingsOnList, Kanji idKanji)
      * Sauvegarde en BD les lectures On du kanji
      *
      * @param readingsOnList List<ReadingsOn>
@@ -27,22 +26,10 @@ public class ReadingsOnService {
         List<ReadingsOn> readingsOnsWithId = new ArrayList<>();
         for (ReadingsOn readingsOn : readingsOnList) {
 
-            readingsOn.setIdKanji(idKanji);
-            ReadingsOn newReadingOn = readingsOnRepositoryInterface.save(readingsOn);
+            readingsOn.setKanji(idKanji);
+            ReadingsOn newReadingOn = readingsOnRepository.save(readingsOn);
             readingsOnsWithId.add(newReadingOn);
         }
         return readingsOnsWithId;
-    }
-
-    /***********************************************************/
-    /**                 GETTERS AND SETTERS                   **/
-    /***********************************************************/
-
-    public ReadingsOnRepositoryInterface getReadingsOnRepositoryInterface() {
-        return readingsOnRepositoryInterface;
-    }
-
-    public void setReadingsOnRepositoryInterface(ReadingsOnRepositoryInterface readingsOnRepositoryInterface) {
-        this.readingsOnRepositoryInterface = readingsOnRepositoryInterface;
     }
 }

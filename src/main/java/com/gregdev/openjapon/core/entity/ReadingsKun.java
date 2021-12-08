@@ -1,7 +1,5 @@
 package com.gregdev.openjapon.core.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 
 @Entity
@@ -11,15 +9,18 @@ public class ReadingsKun {
     private Long id;
     @Column(nullable = false, length = 100)
     private String readingKun;
+
+    /**
+     * Le getter retourne l'id uniquement
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_KANJI")
-    @JsonIgnore
-    private Kanji idKanji;
+    private Kanji kanji;
 
     public ReadingsKun(Long id, String readingKun, Kanji idKanji) {
         this.id = id;
         this.readingKun = readingKun;
-        this.idKanji = idKanji;
+        this.kanji = idKanji;
     }
 
     public ReadingsKun() {
@@ -41,11 +42,11 @@ public class ReadingsKun {
         this.readingKun = readingKun;
     }
 
-    public Kanji getIdKanji() {
-        return idKanji;
+    public Long getIdKanji() {
+        return kanji.getId();
     }
 
-    public void setIdKanji(Kanji idKanji) {
-        this.idKanji = idKanji;
+    public void setKanji(Kanji idKanji) {
+        this.kanji = idKanji;
     }
 }

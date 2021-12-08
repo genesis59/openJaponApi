@@ -1,5 +1,7 @@
 package com.gregdev.openjapon.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,19 +26,19 @@ public class Kanji {
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
-            mappedBy = "idKanji"
+            mappedBy = "kanji"
     )
     private List<MeaningsFr> meaningsFrList = new ArrayList<>();
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
-            mappedBy = "idKanji"
+            mappedBy = "kanji"
     )
     private List<ReadingsKun> readingsKunList = new ArrayList<>();
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
-            mappedBy = "idKanji"
+            mappedBy = "kanji"
     )
     private List<ReadingsOn> readingsOnList = new ArrayList<>();
 

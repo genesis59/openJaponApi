@@ -13,10 +13,25 @@ import java.util.List;
 public class MeaningsFrService {
 
     @Autowired
-    private MeaningsFrRepositoryInterface meaningsFrRepositoryInterface;
+    private MeaningsFrRepositoryInterface meaningsFrRepository;
+
 
     /**
-     * saveList(List<MeaningsFr> meaningsFrList, Kanji idKanji)
+     * Retourne les id des kanji ayant cette signification
+     *
+     * @param meaningFr String
+     * @return List<Long>
+     */
+    public List<Long> getListIdKanjiByMeaningFr(String meaningFr) {
+        Iterable<MeaningsFr> means = meaningsFrRepository.findByMeaningFr(meaningFr);
+        List<Long> idKanjis = new ArrayList<>();
+        for (MeaningsFr mean : means) {
+            idKanjis.add(mean.getIdKanji());
+        }
+        return idKanjis;
+    }
+
+    /**
      * Sauvegarde en BD les significations en français du kanji
      *
      * @param meaningsFrList List<MeaningsFr>
@@ -27,22 +42,11 @@ public class MeaningsFrService {
         List<MeaningsFr> meaningsFrListWithId = new ArrayList<>();
         for (MeaningsFr meaningsFr : meaningsFrList) {
 
-            meaningsFr.setIdKanji(idKanji);
-            MeaningsFr newMeaningFr = meaningsFrRepositoryInterface.save(meaningsFr);
+            meaningsFr.setKanji(idKanji);
+            MeaningsFr newMeaningFr = meaningsFrRepository.save(meaningsFr);
             meaningsFrListWithId.add(newMeaningFr);
         }
         return meaningsFrListWithId;
     }
 
-    /***********************************************************/
-    /**                 GETTERS AND SETTERS                   **/
-    /***********************************************************/
-
-    public MeaningsFrRepositoryInterface getMeaningsFrRepositoryInterface() {
-        return meaningsFrRepositoryInterface;
-    }
-
-    public void setMeaningsFrRepositoryInterface(MeaningsFrRepositoryInterface meaningsFrRepositoryInterface) {
-        this.meaningsFrRepositoryInterface = meaningsFrRepositoryInterface;
-    }
 }

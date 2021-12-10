@@ -1,5 +1,6 @@
 package com.gregdev.openjapon.core.service;
 
+import com.gregdev.openjapon.core.dto.MeaningsFrDto;
 import com.gregdev.openjapon.core.entity.Kanji;
 import com.gregdev.openjapon.core.entity.MeaningsFr;
 import com.gregdev.openjapon.core.repository.MeaningsFrRepositoryInterface;
@@ -34,17 +35,17 @@ public class MeaningsFrService {
     /**
      * Sauvegarde en BD les significations en français du kanji
      *
-     * @param meaningsFrList List<MeaningsFr>
+     * @param meaningsFrListDto List<MeaningsFrDto>
      * @param idKanji        Kanji
      * @return List<MeaningsFr>
      */
-    public List<MeaningsFr> saveList(List<MeaningsFr> meaningsFrList, Kanji idKanji) {
+    public List<MeaningsFr> saveList(List<MeaningsFrDto> meaningsFrListDto, Kanji idKanji) {
         List<MeaningsFr> meaningsFrListWithId = new ArrayList<>();
-        for (MeaningsFr meaningsFr : meaningsFrList) {
-
+        for (MeaningsFrDto meaningsFrDto : meaningsFrListDto) {
+            MeaningsFr meaningsFr = new MeaningsFr();
+            meaningsFr.setMeaningFr(meaningsFrDto.getMeaningFr());
             meaningsFr.setKanji(idKanji);
-            MeaningsFr newMeaningFr = meaningsFrRepository.save(meaningsFr);
-            meaningsFrListWithId.add(newMeaningFr);
+            meaningsFrListWithId.add(meaningsFrRepository.save(meaningsFr));
         }
         return meaningsFrListWithId;
     }

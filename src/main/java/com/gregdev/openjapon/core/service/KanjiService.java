@@ -1,5 +1,6 @@
 package com.gregdev.openjapon.core.service;
 
+import com.gregdev.openjapon.core.dto.KanjiDto;
 import com.gregdev.openjapon.core.entity.Kanji;
 import com.gregdev.openjapon.core.repository.KanjiRepositoryInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class KanjiService {
 
     @Autowired
     private ReadingsOnService readingsOnService;
+
+    @Autowired
+    private KeyKanjiService keyKanjiService;
 
 
     /***********************************************************/
@@ -58,12 +62,12 @@ public class KanjiService {
      * @param id Long
      * @return Optional<Kanji>
      */
-    public Optional<Kanji> getKanjiById(Long id) {
+    public Kanji getKanjiById(Long id) {
         Optional<Kanji> optionalKanji = kanjiRepository.findById(id);
         if (optionalKanji.isEmpty()) {
-            throw new NoSuchElementException();
+            return null;
         }
-        return optionalKanji;
+        return optionalKanji.get();
     }
 
 
@@ -74,34 +78,42 @@ public class KanjiService {
     /**
      * Sauvegarde d'un Kanji et de ses informations
      *
-     * @param kanji Kanji
+     * @param kanjiDto Kanji
      * @return Kanji
      */
-    public Kanji add(Kanji kanji) {
+    public Kanji add(KanjiDto kanjiDto) {
+        try {
 
-        Kanji newKanji = new Kanji();
-        newKanji.setStrokes(kanji.getStrokes());
-        newKanji.setSymbol(kanji.getSymbol());
-        newKanji.setKeyKanji(kanji.getKeyKanji());
-        Kanji kanjiWithId = kanjiRepository.save(newKanji);
+            Kanji newKanji = new Kanji();
+            newKanji.setStrokes(kanjiDto.getStrokes());
+            newKanji.setSymbol(kanjiDto.getSymbol());
+            Kanji kanjiWithId = kanjiRepository.save(newKanji);
 
-        kanjiWithId.setMeaningsFrList(meaningsFrService.saveList(kanji.getMeaningsFrList(), kanjiWithId));
-        kanjiWithId.setReadingsKunList(readingsKunService.saveList(kanji.getReadingsKunList(), kanjiWithId));
-        kanjiWithId.setReadingsOnList(readingsOnService.saveList(kanji.getReadingsOnList(), kanjiWithId));
-        return kanjiWithId;
+            kanjiWithId.setKeyKanji(keyKanjiService.getKeyKanjiByListId(kanjiDto.getKeyKanjiList()));
+            kanjiWithId.setMeaningsFrList(meaningsFrService.saveList(kanjiDto.getMeaningsFrList(), kanjiWithId));
+            kanjiWithId.setReadingsKunList(readingsKunService.saveList(kanjiDto.getReadingsKunList(), kanjiWithId));
+            kanjiWithId.setReadingsOnList(readingsOnService.saveList(kanjiDto.getReadingsOnList(), kanjiWithId));
+            return kanjiWithId;
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+
     }
 
     /**
      * Sauvegarde d'une liste de Kanji et de leurs informations
      *
-     * @param kanjis List<Kanji>
+     * @param kanjisDto List<KanjiDto>
      * @return List<Kanji>
      */
-    public List<Kanji> addAll(List<Kanji> kanjis) {
+    public List<Kanji> addAll(List<KanjiDto> kanjisDto) {
 
         List<Kanji> newKanjis = new ArrayList<>();
-        for (Kanji kanji : kanjis) {
-            Kanji newKanji = this.add(kanji);
+        for (KanjiDto kanjiDto : kanjisDto) {
+            Kanji newKanji = this.add(kanjiDto);
             newKanjis.add(newKanji);
         }
         return newKanjis;

@@ -1,6 +1,5 @@
 package com.gregdev.openjapon.core.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.ArrayList;

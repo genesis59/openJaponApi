@@ -1,8 +1,6 @@
 package com.gregdev.openjapon.core.entity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class KeyKanji {
@@ -18,9 +16,12 @@ public class KeyKanji {
     private Short keyNumber;
     @Column(nullable = false)
     private Byte strokes;
+    /*
     @ManyToMany(mappedBy = "keyKanji")
-    private List<Kanji> kanjis = new ArrayList<>();
+    private List<Kanji> kanjis = new ArrayList<>();*/
 
+    public KeyKanji() {
+    }
 
     public Long getId() {
         return id;
@@ -61,8 +62,8 @@ public class KeyKanji {
     public void setStrokes(Byte strokes) {
         this.strokes = strokes;
     }
-
-    /*public List<Kanji> getKanjis() {
+/*
+    public List<Kanji> getKanjis() {
         return kanjis;
     }
 

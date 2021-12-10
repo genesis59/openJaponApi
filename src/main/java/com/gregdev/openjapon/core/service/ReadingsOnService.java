@@ -1,5 +1,6 @@
 package com.gregdev.openjapon.core.service;
 
+import com.gregdev.openjapon.core.dto.ReadingsOnDto;
 import com.gregdev.openjapon.core.entity.Kanji;
 import com.gregdev.openjapon.core.entity.ReadingsOn;
 import com.gregdev.openjapon.core.repository.ReadingsOnRepositoryInterface;
@@ -18,17 +19,17 @@ public class ReadingsOnService {
     /**
      * Sauvegarde en BD les lectures On du kanji
      *
-     * @param readingsOnList List<ReadingsOn>
+     * @param readingsOnListDto List<ReadingsOn>
      * @param idKanji        Kanji
      * @return List<ReadingsOn>
      */
-    public List<ReadingsOn> saveList(List<ReadingsOn> readingsOnList, Kanji idKanji) {
+    public List<ReadingsOn> saveList(List<ReadingsOnDto> readingsOnListDto, Kanji idKanji) {
         List<ReadingsOn> readingsOnsWithId = new ArrayList<>();
-        for (ReadingsOn readingsOn : readingsOnList) {
-
+        for (ReadingsOnDto readingsOnDto : readingsOnListDto) {
+            ReadingsOn readingsOn = new ReadingsOn();
             readingsOn.setKanji(idKanji);
-            ReadingsOn newReadingOn = readingsOnRepository.save(readingsOn);
-            readingsOnsWithId.add(newReadingOn);
+            readingsOn.setReadingOn(readingsOnDto.getReadingOn());
+            readingsOnsWithId.add(readingsOnRepository.save(readingsOn));
         }
         return readingsOnsWithId;
     }

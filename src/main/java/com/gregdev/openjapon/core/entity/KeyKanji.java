@@ -1,6 +1,10 @@
 package com.gregdev.openjapon.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class KeyKanji {
@@ -16,9 +20,10 @@ public class KeyKanji {
     private Short keyNumber;
     @Column(nullable = false)
     private Byte strokes;
-    /*
+
     @ManyToMany(mappedBy = "keyKanji")
-    private List<Kanji> kanjis = new ArrayList<>();*/
+    @JsonIgnore
+    private List<Kanji> kanjis = new ArrayList<>();
 
     public KeyKanji() {
     }
@@ -62,12 +67,12 @@ public class KeyKanji {
     public void setStrokes(Byte strokes) {
         this.strokes = strokes;
     }
-/*
+
     public List<Kanji> getKanjis() {
         return kanjis;
     }
 
     public void setKanjis(List<Kanji> kanjis) {
         this.kanjis = kanjis;
-    }*/
+    }
 }

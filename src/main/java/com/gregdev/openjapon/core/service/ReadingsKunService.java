@@ -16,11 +16,31 @@ public class ReadingsKunService {
     @Autowired
     private ReadingsKunRepositoryInterface readingsKunRepository;
 
+
+    /**
+     * Récupère les ids des kanji ayant cette lecture
+     *
+     * @param readingKun String
+     * @return List<Long>
+     */
+    public List<Long> getListIdKanjiByReadingKun(String readingKun) {
+        Iterable<ReadingsKun> readsKun = readingsKunRepository.findByReadingKun(readingKun);
+
+        List<Long> idKanjis = new ArrayList<>();
+        for (ReadingsKun readingsKun : readsKun) {
+            idKanjis.add(readingsKun.getIdKanji());
+        }
+        if (idKanjis.isEmpty()) {
+            return null;
+        }
+        return idKanjis;
+    }
+
     /**
      * Sauvegarde en BD les lectures Kun du kanji
      *
      * @param readingsKunListDto List<ReadingsKun>
-     * @param idKanji         Kanji
+     * @param idKanji            Kanji
      * @return List<ReadingsKun>
      */
     public List<ReadingsKun> saveList(List<ReadingsKunDto> readingsKunListDto, Kanji idKanji) {

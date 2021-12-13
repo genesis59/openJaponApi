@@ -17,10 +17,28 @@ public class ReadingsOnService {
     private ReadingsOnRepositoryInterface readingsOnRepository;
 
     /**
+     * Récupère les ids des kanji ayant cette lecture
+     *
+     * @param readingOn String
+     * @return List<Long>
+     */
+    public List<Long> getListIdKanjiByReadingOn(String readingOn) {
+        Iterable<ReadingsOn> readsOn = readingsOnRepository.findByReadingOn(readingOn);
+        List<Long> idKanjis = new ArrayList<>();
+        for (ReadingsOn readingsOn : readsOn) {
+            idKanjis.add(readingsOn.getIdKanji());
+        }
+        if (idKanjis.isEmpty()) {
+            return null;
+        }
+        return idKanjis;
+    }
+
+    /**
      * Sauvegarde en BD les lectures On du kanji
      *
      * @param readingsOnListDto List<ReadingsOn>
-     * @param idKanji        Kanji
+     * @param idKanji           Kanji
      * @return List<ReadingsOn>
      */
     public List<ReadingsOn> saveList(List<ReadingsOnDto> readingsOnListDto, Kanji idKanji) {

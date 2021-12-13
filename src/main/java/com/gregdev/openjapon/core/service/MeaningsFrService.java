@@ -18,7 +18,7 @@ public class MeaningsFrService {
 
 
     /**
-     * Retourne les id des kanji ayant cette signification
+     * Retourne les ids des kanji ayant cette signification
      *
      * @param meaningFr String
      * @return List<Long>
@@ -29,6 +29,9 @@ public class MeaningsFrService {
         for (MeaningsFr mean : means) {
             idKanjis.add(mean.getIdKanji());
         }
+        if (idKanjis.isEmpty()) {
+            return null;
+        }
         return idKanjis;
     }
 
@@ -36,7 +39,7 @@ public class MeaningsFrService {
      * Sauvegarde en BD les significations en français du kanji
      *
      * @param meaningsFrListDto List<MeaningsFrDto>
-     * @param idKanji        Kanji
+     * @param idKanji           Kanji
      * @return List<MeaningsFr>
      */
     public List<MeaningsFr> saveList(List<MeaningsFrDto> meaningsFrListDto, Kanji idKanji) {
